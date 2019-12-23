@@ -18,15 +18,17 @@ public class MCLauncherLab
 {
 	public static void main(String[] args)
 	{
-		OnlineVersionList onlineList = new OnlineVersionList();
-		OnlineVersion latestStable = onlineList.getVersion(onlineList.getLatestRelease());
+		String targetVersion = "1.15.1";
 		
-		EasyRequest request = new EasyRequest(latestStable.getUrl());
-		File gameFolder = new File("data/versions/1.15.1/");
-		gameFolder.mkdirs();
+		OnlineVersionList onlineList = new OnlineVersionList();
+		OnlineVersion targetVersionEntry = onlineList.getVersion(targetVersion);
+		
+		EasyRequest request = new EasyRequest(targetVersionEntry.getUrl());
+		File versionFolder = new File(Locations.versionsFolder, targetVersion);
+		versionFolder.mkdirs();
 		try
 		{
-			Files.write(new File(gameFolder, "1.15.1.json").toPath(), request.asBytes());
+			Files.write(new File(versionFolder, targetVersion + ".json").toPath(), request.asBytes());
 		}
 		catch(IOException e)
 		{
@@ -36,12 +38,12 @@ public class MCLauncherLab
 		}
 		
 		JSONObject object = (JSONObject) JSONParser.parse(request.getBody());
-		VersionInfo version = new VersionInfo(object, latestStable.getUrl());
-//		download(version, gameFolder);
-		run(version, gameFolder);
+		VersionInfo version = new VersionInfo(object, targetVersionEntry.getUrl());
+//		download(version, versionFolder, targetVersion);
+		run(version, versionFolder);
 	}
 	
-	public static void run(VersionInfo version, File gameFolder)
+	public static void run(VersionInfo version, File versionFolder)
 	{
 		//> which java
 		//> l /usr/bin/java
@@ -53,14 +55,12 @@ public class MCLauncherLab
 		//Why: -Xmx1G -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -XX:-UseAdaptiveSizePolicy -Xmn128M
 		
 		//Create classpath:
-		File libraryFile = new File("data/libraries/");
-		String classpath = version.getLibraryInfo().genClasspath(libraryFile);
-		classpath += ':' + new File(gameFolder, "1.15.1.jar").getAbsolutePath();
+		String classpath = version.getLibraryInfo().genClasspath(Locations.librariesFolder);
+		classpath += ':' + new File(versionFolder, "1.15.1.jar").getAbsolutePath();
 		
 		//Create natives directory:
-//		File libraryFolder = new File("data/libraries/");
-		File nativesFolder = new File(gameFolder, "1.15.1-natives");
-//		version.getLibraryInfo().installNatives(libraryFolder, nativesFolder);
+		File nativesFolder = new File(versionFolder, "1.15.1-natives");
+//		version.getLibraryInfo().installNatives(Locations.librariesFolder, nativesFolder);
 		
 		List<String> arguments = new ArrayList<>();
 		arguments.add("java"); //Here?
@@ -111,10 +111,10 @@ public class MCLauncherLab
 		}
 	}
 	
-	public static void download(VersionInfo version, File folder)
+	public static void download(VersionInfo version, File versionFolder, String targetVersion)
 	{
 		version.getAssetsInfo().download();
 		version.getLibraryInfo().download();
-		version.getDownloads().download(new File(folder, "1.15.1.jar"), "client");
+		version.getDownloads().download(new File(versionFolder, targetVersion + ".jar"), "client");
 	}
 }

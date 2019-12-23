@@ -1,6 +1,5 @@
 package de.ecconia.mclauncher.data;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -8,6 +7,7 @@ import java.util.regex.Pattern;
 
 import de.ecconia.java.json.JSONArray;
 import de.ecconia.java.json.JSONObject;
+import de.ecconia.mclauncher.Locations;
 import de.ecconia.mclauncher.data.rules.Rules;
 
 public class RunArguments
@@ -119,11 +119,11 @@ public class RunArguments
 				}
 				else if("game_directory".equals(found))
 				{
-					replacement = new File("data/").getAbsolutePath();
+					replacement = Locations.rootFolder.getAbsolutePath();
 				}
 				else if("assets_root".equals(found))
 				{
-					replacement = new File("data/assets").getAbsolutePath();
+					replacement = Locations.assetsFolder.getAbsolutePath();
 				}
 				else if("assets_index_name".equals(found))
 				{

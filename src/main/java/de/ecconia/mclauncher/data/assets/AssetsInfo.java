@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import de.ecconia.java.json.JSONObject;
 import de.ecconia.java.json.JSONParser;
 import de.ecconia.mclauncher.EasyRequest;
+import de.ecconia.mclauncher.Locations;
 import de.ecconia.mclauncher.download.DownloadInfo;
 
 public class AssetsInfo
@@ -51,7 +52,7 @@ public class AssetsInfo
 			EasyRequest request = new EasyRequest(assetsManifest.getUrl());
 			String sourceCode = request.getBody();
 			
-			File destination = new File("data/assets/indexes/");
+			File destination = Locations.assetsIndexesFolder;
 			destination.mkdirs();
 			destination = new File(destination, id + ".json");
 			
@@ -77,7 +78,7 @@ public class AssetsInfo
 		}
 		
 		String downloadRoot = "https://resources.download.minecraft.net/";
-		File destination = new File("data/assets/objects/");
+		File destination = Locations.assetsObjectsFolder;
 		destination.mkdirs();
 		
 		System.out.println("Starting download of assets:");

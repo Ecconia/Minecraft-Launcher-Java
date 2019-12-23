@@ -1,7 +1,6 @@
 package de.ecconia.mclauncher.data.libraries;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;

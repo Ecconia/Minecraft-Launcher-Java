@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import de.ecconia.java.json.JSONArray;
 import de.ecconia.java.json.JSONObject;
+import de.ecconia.mclauncher.Locations;
 
 public class LibraryInfo
 {
@@ -27,7 +28,7 @@ public class LibraryInfo
 	
 	public void download()
 	{
-		File locationRoot = new File("data/libraries/");
+		File locationRoot = Locations.librariesFolder;
 		locationRoot.mkdirs();
 		
 		System.out.println("Starting library download.");
