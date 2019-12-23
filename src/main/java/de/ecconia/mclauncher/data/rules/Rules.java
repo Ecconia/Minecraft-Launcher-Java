@@ -133,7 +133,7 @@ public class Rules
 			throw new RuntimeException("Unexpected rule action: " + action);
 		}
 	}
-
+	
 	public static void main(String[] args)
 	{
 		System.out.println(System.getProperty("os.name"));
@@ -229,7 +229,7 @@ public class Rules
 			version = osJSON.getStringOrNull("version");
 			arch = osJSON.getStringOrNull("arch");
 		}
-
+		
 		@Override
 		protected boolean applies()
 		{

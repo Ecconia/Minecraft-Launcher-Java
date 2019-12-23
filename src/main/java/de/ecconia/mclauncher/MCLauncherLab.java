@@ -118,14 +118,3 @@ public class MCLauncherLab
 		version.getDownloads().download(new File(folder, "1.15.1.jar"), "client");
 	}
 }
-
-
-
-
-
-
-
-
-
-
-

@@ -69,7 +69,7 @@ public class VersionInfo
 	{
 		return minimumLauncherVersion;
 	}
-
+	
 	public DownloadSection getDownloads()
 	{
 		return downloads;

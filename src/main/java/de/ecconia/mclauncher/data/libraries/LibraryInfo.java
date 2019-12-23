@@ -40,7 +40,7 @@ public class LibraryInfo
 		}
 		System.out.println("Finished/Aborted library download");
 	}
-
+	
 	public String genClasspath(File libraryFile)
 	{
 		String tmp = relevantLibararies.get(0).getClasspath(libraryFile);
@@ -53,7 +53,7 @@ public class LibraryInfo
 		}
 		return tmp;
 	}
-
+	
 	public void installNatives(File libLocation, File destination)
 	{
 		destination.mkdirs();
