@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,27 +23,26 @@ public class MCLauncherLab
 		OnlineVersion targetVersionEntry = onlineList.getVersion(targetVersion);
 		
 		EasyRequest request = new EasyRequest(targetVersionEntry.getUrl());
-		File versionFolder = new File(Locations.versionsFolder, targetVersion);
-		versionFolder.mkdirs();
-		try
-		{
-			Files.write(new File(versionFolder, targetVersion + ".json").toPath(), request.asBytes());
-		}
-		catch(IOException e)
-		{
-			System.out.println("Error saving file.");
-			e.printStackTrace(System.out);
-			return;
-		}
-		
 		JSONObject object = (JSONObject) JSONParser.parse(request.getBody());
 		VersionInfo version = new VersionInfo(object, targetVersionEntry.getUrl());
-//		download(version, versionFolder, targetVersion);
-		run(version, versionFolder);
+		
+		//Custom options:
+//		Locations.rootFolder.mkdirs(); //Ensure the root folder is ready.
+//		VersionDownloader.download(version, request.asBytes());
+//		installNatives(version);
+		run(version);
 	}
 	
-	public static void run(VersionInfo version, File versionFolder)
+	@SuppressWarnings("unused")
+	private static void installNatives(VersionInfo version)
 	{
+		File nativesFolder = new File(new File(Locations.versionsFolder, version.getInfo().getId()), version.getInfo().getId() + "-natives");
+		version.getLibraryInfo().installNatives(Locations.librariesFolder, nativesFolder);
+	}
+	
+	public static void run(VersionInfo version)
+	{
+		File versionFolder = new File(Locations.versionsFolder, version.getInfo().getId());
 		//> which java
 		//> l /usr/bin/java
 		//> l /etc/alternatives/java
@@ -56,11 +54,10 @@ public class MCLauncherLab
 		
 		//Create classpath:
 		String classpath = version.getLibraryInfo().genClasspath(Locations.librariesFolder);
-		classpath += ':' + new File(versionFolder, "1.15.1.jar").getAbsolutePath();
+		classpath += ':' + new File(versionFolder, version.getInfo().getId() + ".jar").getAbsolutePath();
 		
 		//Create natives directory:
-		File nativesFolder = new File(versionFolder, "1.15.1-natives");
-//		version.getLibraryInfo().installNatives(Locations.librariesFolder, nativesFolder);
+		File nativesFolder = new File(versionFolder, version.getInfo().getId() + "-natives");
 		
 		List<String> arguments = new ArrayList<>();
 		arguments.add("java"); //Here?
@@ -109,12 +106,5 @@ public class MCLauncherLab
 		{
 			e.printStackTrace();
 		}
-	}
-	
-	public static void download(VersionInfo version, File versionFolder, String targetVersion)
-	{
-		version.getAssetsInfo().download();
-		version.getLibraryInfo().download();
-		version.getDownloads().download(new File(versionFolder, targetVersion + ".jar"), "client");
 	}
 }

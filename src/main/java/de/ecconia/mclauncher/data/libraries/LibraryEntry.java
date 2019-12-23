@@ -102,40 +102,14 @@ public class LibraryEntry
 		return artifact;
 	}
 	
-	public boolean download(File rootLocation)
+	public Map<String, DownloadInfo> getClassifiers()
 	{
-		//If there are natives there !!probably!! also is another library entry for this artifact.
-		if(isNonNative())
-		{
-			if(!artifact.genericDownload(rootLocation))
-			{
-				return false;
-			}
-		}
-		else
-		{
-			for(Entry<String, String> entry : natives.entrySet())
-			{
-				if(OSTools.isOsName(entry.getKey()))
-				{
-					DownloadInfo nativeFile = classifiers.get(entry.getValue());
-					if(nativeFile == null)
-					{
-						System.out.println("Expected library: " + name + " to have native module in classified section, but it had not. For OS: " + entry.getKey());
-						return false;
-					}
-					
-					if(!nativeFile.genericDownload(rootLocation))
-					{
-						return false;
-					}
-					
-					break;
-				}
-			}
-		}
-		
-		return true;
+		return classifiers;
+	}
+	
+	public Map<String, String> getNatives()
+	{
+		return natives;
 	}
 	
 	public String getClasspath(File libraryFile)

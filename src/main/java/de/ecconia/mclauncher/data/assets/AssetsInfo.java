@@ -1,8 +1,5 @@
 package de.ecconia.mclauncher.data.assets;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -10,7 +7,6 @@ import java.util.Map.Entry;
 import de.ecconia.java.json.JSONObject;
 import de.ecconia.java.json.JSONParser;
 import de.ecconia.mclauncher.EasyRequest;
-import de.ecconia.mclauncher.Locations;
 import de.ecconia.mclauncher.download.DownloadInfo;
 
 public class AssetsInfo
@@ -43,29 +39,19 @@ public class AssetsInfo
 		return totalSize;
 	}
 	
-	public void download()
+	public List<AssetsPart> getObjects()
+	{
+		return objects;
+	}
+	
+	public byte[] resolve()
 	{
 		if(objects == null)
 		{
 			objects = new ArrayList<>();
-			System.out.println("Downloading " + id + " index file.");
+			//TBI: Is this a proper place to download - in a data class?
 			EasyRequest request = new EasyRequest(assetsManifest.getUrl());
 			String sourceCode = request.getBody();
-			
-			File destination = Locations.assetsIndexesFolder;
-			destination.mkdirs();
-			destination = new File(destination, id + ".json");
-			
-			try
-			{
-				Files.write(destination.toPath(), request.asBytes());
-			}
-			catch(IOException e)
-			{
-				System.out.println("Error saving index file.");
-				e.printStackTrace(System.out);
-				return;
-			}
 			
 			JSONObject object = (JSONObject) JSONParser.parse(sourceCode);
 			JSONObject objects = object.getObject("objects");
@@ -75,43 +61,14 @@ public class AssetsInfo
 				JSONObject value = JSONObject.asObject(entry.getValue());
 				this.objects.add(new AssetsPart(key, value.getLong("size"), value.getString("hash")));
 			}
+			
+			return request.asBytes();
 		}
 		
-		String downloadRoot = "https://resources.download.minecraft.net/";
-		File destination = Locations.assetsObjectsFolder;
-		destination.mkdirs();
-		
-		System.out.println("Starting download of assets:");
-		for(AssetsPart object : objects)
-		{
-			System.out.println(object.getPath() + " -> " + object.getHash());
-			
-			File thisDir = new File(destination, object.getHash().substring(0, 2));
-			thisDir.mkdir();
-			File thisFile = new File(thisDir, object.getHash());
-			EasyRequest request = new EasyRequest(downloadRoot + object.getHash().substring(0, 2) + "/" + object.getHash());
-			if(request.asBytes().length != object.getSize())
-			{
-				System.out.println("File size " + request.asBytes().length + "/" + object.getSize());
-				System.out.println("FILESIZE ERROR");
-				break;
-			}
-			
-			try
-			{
-				Files.write(thisFile.toPath(), request.asBytes());
-			}
-			catch(IOException e)
-			{
-				System.out.println("Error saving file.");
-				e.printStackTrace(System.out);
-				break;
-			}
-		}
-		System.out.println("Download done/aborted.");
+		return null;
 	}
 	
-	private static class AssetsPart
+	public static class AssetsPart
 	{
 		private final String path;
 		private final long size;

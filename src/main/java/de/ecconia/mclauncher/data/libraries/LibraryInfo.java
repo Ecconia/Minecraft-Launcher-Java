@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import de.ecconia.java.json.JSONArray;
 import de.ecconia.java.json.JSONObject;
-import de.ecconia.mclauncher.Locations;
 
 public class LibraryInfo
 {
@@ -24,22 +23,6 @@ public class LibraryInfo
 		
 		//Apply rules, this should only filter the wrong operating systems (MaxOS or other).
 		relevantLibararies = allLibararies.stream().filter(LibraryEntry::isRelevant).collect(Collectors.toList());
-	}
-	
-	public void download()
-	{
-		File locationRoot = Locations.librariesFolder;
-		locationRoot.mkdirs();
-		
-		System.out.println("Starting library download.");
-		for(LibraryEntry entry : relevantLibararies)
-		{
-			if(!entry.download(locationRoot))
-			{
-				break;
-			}
-		}
-		System.out.println("Finished/Aborted library download");
 	}
 	
 	public String genClasspath(File libraryFile)
@@ -65,5 +48,10 @@ public class LibraryInfo
 				entry.installNatives(libLocation, destination);
 			}
 		}
+	}
+	
+	public List<LibraryEntry> getRelevantLibraries()
+	{
+		return relevantLibararies;
 	}
 }

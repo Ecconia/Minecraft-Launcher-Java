@@ -1,6 +1,5 @@
 package de.ecconia.mclauncher.data;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -20,14 +19,8 @@ public class DownloadSection
 		}
 	}
 	
-	public void download(File location, String type)
+	public DownloadInfo get(String type)
 	{
-		DownloadInfo dl = downloads.get(type);
-		if(dl == null)
-		{
-			throw new RuntimeException("Type '" + type + "' not in download section.");
-		}
-		
-		dl.genericDownload(location);
+		return downloads.get(type);
 	}
 }
