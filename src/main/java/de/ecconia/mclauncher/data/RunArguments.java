@@ -119,7 +119,7 @@ public class RunArguments
 				}
 				else if("game_directory".equals(found))
 				{
-					replacement = Locations.rootFolder.getAbsolutePath();
+					replacement = Locations.gameFolder.getAbsolutePath();
 				}
 				else if("assets_root".equals(found))
 				{

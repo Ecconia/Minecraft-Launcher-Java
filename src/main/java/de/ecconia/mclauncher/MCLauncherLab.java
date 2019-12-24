@@ -42,6 +42,9 @@ public class MCLauncherLab
 	
 	public static void run(VersionInfo version)
 	{
+		Locations.gameFolder.mkdirs();
+		Locations.runFolder.mkdirs();
+		
 		File versionFolder = new File(Locations.versionsFolder, version.getInfo().getId());
 		//> which java
 		//> l /usr/bin/java
@@ -74,7 +77,7 @@ public class MCLauncherLab
 		}
 		
 		ProcessBuilder builder = new ProcessBuilder(arguments);
-		builder.directory(new File("data"));
+		builder.directory(Locations.runFolder);
 		
 		try
 		{
