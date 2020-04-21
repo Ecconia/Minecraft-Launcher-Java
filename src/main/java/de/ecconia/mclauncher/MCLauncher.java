@@ -5,6 +5,8 @@ import de.ecconia.java.json.JSONParser;
 import de.ecconia.mclauncher.data.OnlineVersionList;
 import de.ecconia.mclauncher.data.VersionInfo;
 import de.ecconia.mclauncher.download.VersionDownloader;
+import de.ecconia.mclauncher.webrequests.Requests;
+import de.ecconia.mclauncher.webrequests.Response;
 
 public class MCLauncher
 {
@@ -28,10 +30,10 @@ public class MCLauncher
 		OnlineVersionList.OnlineVersion targetVersionEntry = onlineList.getVersion(targetVersion); //Pick desired version
 		
 		//Download amd parse full info file for this version:
-		EasyRequest request = new EasyRequest(targetVersionEntry.getUrl());
-		JSONObject object = (JSONObject) JSONParser.parse(request.getBody());
+		Response response = Requests.sendGetRequest(targetVersionEntry.getUrl());
+		JSONObject object = (JSONObject) JSONParser.parse(response.getResponse());
 		currentVersion = new VersionInfo(object, targetVersionEntry.getUrl());
-		versionInfoRaw = request.asBytes();
+		versionInfoRaw = response.getResponseRaw();
 	}
 	
 	public static void installVersion()

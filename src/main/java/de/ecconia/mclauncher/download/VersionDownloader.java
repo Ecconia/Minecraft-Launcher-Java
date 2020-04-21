@@ -1,16 +1,16 @@
 package de.ecconia.mclauncher.download;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.Map.Entry;
-
-import de.ecconia.mclauncher.EasyRequest;
 import de.ecconia.mclauncher.Locations;
 import de.ecconia.mclauncher.OSTools;
 import de.ecconia.mclauncher.data.VersionInfo;
 import de.ecconia.mclauncher.data.assets.AssetsInfo.AssetsPart;
 import de.ecconia.mclauncher.data.libraries.LibraryEntry;
+import de.ecconia.mclauncher.webrequests.Requests;
+import de.ecconia.mclauncher.webrequests.Response;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Map.Entry;
 
 public class VersionDownloader
 {
@@ -51,16 +51,16 @@ public class VersionDownloader
 			destination.mkdir();
 			destination = new File(destination, object.getHash());
 			
-			EasyRequest request = new EasyRequest("https://resources.download.minecraft.net/" + object.getHash().substring(0, 2) + "/" + object.getHash());
-			if(request.asBytes().length != object.getSize())
+			Response response = Requests.sendGetRequest("https://resources.download.minecraft.net/" + object.getHash().substring(0, 2) + "/" + object.getHash());
+			if(response.getResponseRaw().length != object.getSize())
 			{
-				System.out.println("File size " + request.asBytes().length + "/" + object.getSize());
+				System.out.println("File size " + response.getResponseRaw().length + "/" + object.getSize());
 				throw new RuntimeException("Oopsie, see stacktrace, error handling after cleanup.");
 			}
 			
 			try
 			{
-				Files.write(destination.toPath(), request.asBytes());
+				Files.write(destination.toPath(), response.getResponseRaw());
 			}
 			catch(IOException e)
 			{

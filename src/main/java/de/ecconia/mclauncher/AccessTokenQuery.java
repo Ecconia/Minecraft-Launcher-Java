@@ -2,6 +2,8 @@ package de.ecconia.mclauncher;
 
 import de.ecconia.java.json.JSONObject;
 import de.ecconia.java.json.JSONParser;
+import de.ecconia.mclauncher.webrequests.Requests;
+import de.ecconia.mclauncher.webrequests.Response;
 import java.util.Scanner;
 
 public class AccessTokenQuery
@@ -33,13 +35,13 @@ public class AccessTokenQuery
 		body.put("username", email);
 		body.put("password", password);
 		
-		EasyRequest request = new EasyRequest(authServerURL + "/authenticate", body.printJSON());
+		Response response = Requests.sendJSONRequest(authServerURL + "/authenticate", body.printJSON());
 		
-		if(request.getResponseCode() == 200)
+		if(response.getResponseCode() == 200)
 		{
-			JSONObject response = (JSONObject) JSONParser.parse(request.getBody());
-			String accessToken = response.getString("accessToken");
-			JSONObject profile = response.getObject("selectedProfile");
+			JSONObject jsonResponse = (JSONObject) JSONParser.parse(response.getResponse());
+			String accessToken = jsonResponse.getString("accessToken");
+			JSONObject profile = jsonResponse.getObject("selectedProfile");
 			String username = profile.getString("name");
 			String uuid = profile.getString("id");
 			System.out.println("-> Access Token:");
@@ -51,8 +53,8 @@ public class AccessTokenQuery
 		}
 		else
 		{
-			System.out.println("Something went wrong acquiring a new AccessToken: " + request.getResponseCode() + " " + request.getResponseString());
-			System.out.println("Response: \n\n" + request.getResponseString());
+			System.out.println("Something went wrong acquiring a new AccessToken: " + response.getResponseCode() + " " + response.getResponseMessage());
+			System.out.println("Response: \n\n" + response.getResponse());
 		}
 	}
 }

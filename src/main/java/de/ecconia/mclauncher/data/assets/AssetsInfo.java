@@ -1,13 +1,13 @@
 package de.ecconia.mclauncher.data.assets;
 
+import de.ecconia.java.json.JSONObject;
+import de.ecconia.java.json.JSONParser;
+import de.ecconia.mclauncher.download.DownloadInfo;
+import de.ecconia.mclauncher.webrequests.Requests;
+import de.ecconia.mclauncher.webrequests.Response;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
-
-import de.ecconia.java.json.JSONObject;
-import de.ecconia.java.json.JSONParser;
-import de.ecconia.mclauncher.EasyRequest;
-import de.ecconia.mclauncher.download.DownloadInfo;
 
 public class AssetsInfo
 {
@@ -50,8 +50,8 @@ public class AssetsInfo
 		{
 			objects = new ArrayList<>();
 			//TBI: Is this a proper place to download - in a data class?
-			EasyRequest request = new EasyRequest(assetsManifest.getUrl());
-			String sourceCode = request.getBody();
+			Response reponse = Requests.sendGetRequest(assetsManifest.getUrl());
+			String sourceCode = reponse.getResponse();
 			
 			JSONObject object = (JSONObject) JSONParser.parse(sourceCode);
 			JSONObject objects = object.getObject("objects");
@@ -62,7 +62,7 @@ public class AssetsInfo
 				this.objects.add(new AssetsPart(key, value.getLong("size"), value.getString("hash")));
 			}
 			
-			return request.asBytes();
+			return reponse.getResponseRaw();
 		}
 		
 		return null;

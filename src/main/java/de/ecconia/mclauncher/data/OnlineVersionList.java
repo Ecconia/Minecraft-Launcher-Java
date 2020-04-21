@@ -1,12 +1,12 @@
 package de.ecconia.mclauncher.data;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import de.ecconia.java.json.JSONArray;
 import de.ecconia.java.json.JSONObject;
 import de.ecconia.java.json.JSONParser;
-import de.ecconia.mclauncher.EasyRequest;
+import de.ecconia.mclauncher.webrequests.Requests;
+import de.ecconia.mclauncher.webrequests.Response;
+import java.util.HashMap;
+import java.util.Map;
 
 public class OnlineVersionList
 {
@@ -73,8 +73,8 @@ public class OnlineVersionList
 	
 	public static String getRequest(String address)
 	{
-		EasyRequest request = new EasyRequest(address);
-		return request.getBody();
+		Response request = Requests.sendGetRequest(address);
+		return request.getResponse();
 	}
 	
 	public static class OnlineVersion
@@ -98,11 +98,11 @@ public class OnlineVersionList
 		public OnlineVersion(JSONObject object)
 		{
 			this(
-				object.getString("type"),
-				object.getString("time"),
-				object.getString("releaseTime"),
-				object.getString("url"),
-				object.getString("id"));
+					object.getString("type"),
+					object.getString("time"),
+					object.getString("releaseTime"),
+					object.getString("url"),
+					object.getString("id"));
 		}
 		
 		public String getId()

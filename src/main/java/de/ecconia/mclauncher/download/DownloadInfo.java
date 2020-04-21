@@ -1,11 +1,12 @@
 package de.ecconia.mclauncher.download;
 
+import de.ecconia.mclauncher.webrequests.Requests;
+import de.ecconia.mclauncher.webrequests.Response;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
 import de.ecconia.java.json.JSONObject;
-import de.ecconia.mclauncher.EasyRequest;
 
 public class DownloadInfo
 {
@@ -57,18 +58,18 @@ public class DownloadInfo
 			destination = new File(destination, fileName);
 		}
 		
-		EasyRequest request = new EasyRequest(url);
+		Response response = Requests.sendGetRequest(url);
 		
-		if(request.asBytes().length != size)
+		if(response.getResponseRaw().length != size)
 		{
-			System.out.println("File size " + request.asBytes().length + "/" + size);
+			System.out.println("File size " + response.getResponseRaw().length + "/" + size);
 			System.out.println("FILESIZE ERROR");
 			return false;
 		}
 		
 		try
 		{
-			Files.write(destination.toPath(), request.asBytes());
+			Files.write(destination.toPath(), response.getResponseRaw());
 		}
 		catch(IOException e)
 		{
