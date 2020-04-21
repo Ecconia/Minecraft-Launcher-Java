@@ -18,19 +18,24 @@ public class MCLauncherLab
 {
 	public static void main(String[] args)
 	{
+//		AccessTokenQuery.queryAccessToken(); //Prints a new access token to console please paste it into the RunArguments class
+		
 		String targetVersion = "1.15.2";
-		
-		OnlineVersionList onlineList = new OnlineVersionList();
-		OnlineVersion targetVersionEntry = onlineList.getVersion(targetVersion);
-		
+
+		OnlineVersionList onlineList = new OnlineVersionList(); //Download all versions file
+		OnlineVersion targetVersionEntry = onlineList.getVersion(targetVersion); //Pick desired version
+
+		//Download amd parse full info file for this version:
 		EasyRequest request = new EasyRequest(targetVersionEntry.getUrl());
 		JSONObject object = (JSONObject) JSONParser.parse(request.getBody());
 		VersionInfo version = new VersionInfo(object, targetVersionEntry.getUrl());
 		
-		//Custom options:
+		//Install:
 		Locations.rootFolder.mkdirs(); //Ensure the root folder is ready.
 		VersionDownloader.download(version, request.asBytes());
 		installNatives(version);
+		
+		//Run:
 		run(version);
 	}
 	
