@@ -8,3 +8,7 @@
 
 #Project:
 /data/
+
+#IntelliJ
+/.idea/
+/*.iml
