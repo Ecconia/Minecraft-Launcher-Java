@@ -103,6 +103,21 @@ public class MCLauncherLab
 					e.printStackTrace();
 				}
 			}).start();
+			new Thread(() -> {
+				BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+				String tmp;
+				try
+				{
+					while((tmp = reader.readLine()) != null)
+					{
+						System.out.println("x> " + tmp);
+					}
+				}
+				catch(IOException e)
+				{
+					e.printStackTrace();
+				}
+			}).start();
 			System.out.println("Started");
 			process.waitFor();
 			System.out.println("Terminated...");
