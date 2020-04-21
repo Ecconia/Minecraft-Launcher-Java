@@ -12,6 +12,11 @@ import de.ecconia.mclauncher.data.rules.Rules;
 
 public class RunArguments
 {
+	private static final String username = "Ecconia"; //Your username
+	private static final String uuid = "ee01e49d577749bdb74dc676059694d3"; //Your UUID
+	//Your access token, format from 1.14.2 onwards is a Json-WebToken which might not be compatible with older versions, TODO fix.
+	private static final String accessToken = "";
+	
 	private List<Argument> argumentsJVM = new ArrayList<>();
 	private List<Argument> argumentsGame = new ArrayList<>();
 	
@@ -111,11 +116,11 @@ public class RunArguments
 				String replacement;
 				if("auth_player_name".equals(found))
 				{
-					replacement = "Ecconia";
+					replacement = username;
 				}
 				else if("version_name".equals(found))
 				{
-					replacement = "1.15.1";
+					replacement = version.getInfo().getId();
 				}
 				else if("game_directory".equals(found))
 				{
@@ -127,15 +132,15 @@ public class RunArguments
 				}
 				else if("assets_index_name".equals(found))
 				{
-					replacement = "1.15";
+					replacement = version.getAssetsInfo().getId();
 				}
 				else if("auth_uuid".equals(found))
 				{
-					replacement = "ee01e49d577749bdb74dc676059694d3";
+					replacement = uuid;
 				}
 				else if("auth_access_token".equals(found))
 				{
-					replacement = "<removed>";
+					replacement = accessToken;
 				}
 				else if("user_type".equals(found))
 				{
