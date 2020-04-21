@@ -12,12 +12,13 @@ import de.ecconia.java.json.JSONParser;
 import de.ecconia.mclauncher.data.OnlineVersionList;
 import de.ecconia.mclauncher.data.OnlineVersionList.OnlineVersion;
 import de.ecconia.mclauncher.data.VersionInfo;
+import de.ecconia.mclauncher.download.VersionDownloader;
 
 public class MCLauncherLab
 {
 	public static void main(String[] args)
 	{
-		String targetVersion = "1.15.1";
+		String targetVersion = "1.15.2";
 		
 		OnlineVersionList onlineList = new OnlineVersionList();
 		OnlineVersion targetVersionEntry = onlineList.getVersion(targetVersion);
@@ -27,9 +28,9 @@ public class MCLauncherLab
 		VersionInfo version = new VersionInfo(object, targetVersionEntry.getUrl());
 		
 		//Custom options:
-//		Locations.rootFolder.mkdirs(); //Ensure the root folder is ready.
-//		VersionDownloader.download(version, request.asBytes());
-//		installNatives(version);
+		Locations.rootFolder.mkdirs(); //Ensure the root folder is ready.
+		VersionDownloader.download(version, request.asBytes());
+		installNatives(version);
 		run(version);
 	}
 	
