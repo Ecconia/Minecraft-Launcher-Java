@@ -1,5 +1,6 @@
 package de.ecconia.mclauncher;
 
+import de.ecconia.mclauncher.data.VersionInfo;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -7,40 +8,9 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.ecconia.java.json.JSONObject;
-import de.ecconia.java.json.JSONParser;
-import de.ecconia.mclauncher.data.OnlineVersionList;
-import de.ecconia.mclauncher.data.OnlineVersionList.OnlineVersion;
-import de.ecconia.mclauncher.data.VersionInfo;
-import de.ecconia.mclauncher.download.VersionDownloader;
-
 public class MCLauncherLab
 {
-	public static void main(String[] args)
-	{
-//		AccessTokenQuery.queryAccessToken(); //Prints a new access token to console please paste it into the RunArguments class
-		
-		String targetVersion = "1.15.2";
-
-		OnlineVersionList onlineList = new OnlineVersionList(); //Download all versions file
-		OnlineVersion targetVersionEntry = onlineList.getVersion(targetVersion); //Pick desired version
-
-		//Download amd parse full info file for this version:
-		EasyRequest request = new EasyRequest(targetVersionEntry.getUrl());
-		JSONObject object = (JSONObject) JSONParser.parse(request.getBody());
-		VersionInfo version = new VersionInfo(object, targetVersionEntry.getUrl());
-		
-		//Install:
-		Locations.rootFolder.mkdirs(); //Ensure the root folder is ready.
-		VersionDownloader.download(version, request.asBytes());
-		installNatives(version);
-		
-		//Run:
-		run(version);
-	}
-	
-	@SuppressWarnings("unused")
-	private static void installNatives(VersionInfo version)
+	public static void installNatives(VersionInfo version)
 	{
 		File nativesFolder = new File(new File(Locations.versionsFolder, version.getInfo().getId()), version.getInfo().getId() + "-natives");
 		version.getLibraryInfo().installNatives(Locations.librariesFolder, nativesFolder);
