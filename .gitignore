@@ -8,6 +8,7 @@
 
 #Project:
 /data/
+/profiles/
 
 #IntelliJ
 /.idea/

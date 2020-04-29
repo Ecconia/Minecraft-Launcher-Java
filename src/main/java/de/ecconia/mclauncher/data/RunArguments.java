@@ -1,24 +1,19 @@
 package de.ecconia.mclauncher.data;
 
+import de.ecconia.java.json.JSONArray;
+import de.ecconia.java.json.JSONObject;
+import de.ecconia.mclauncher.Locations;
+import de.ecconia.mclauncher.LoginProfile;
+import de.ecconia.mclauncher.data.rules.Rules;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import de.ecconia.java.json.JSONArray;
-import de.ecconia.java.json.JSONObject;
-import de.ecconia.mclauncher.Locations;
-import de.ecconia.mclauncher.data.rules.Rules;
-
 public class RunArguments
 {
-	private static final String username = "Ecconia"; //Your username
-	private static final String uuid = "ee01e49d577749bdb74dc676059694d3"; //Your UUID
-	//Your access token, format from 1.14.2 onwards is a Json-WebToken which might not be compatible with older versions, TODO fix.
-	private static final String accessToken = "";
-	
-	private List<Argument> argumentsJVM = new ArrayList<>();
-	private List<Argument> argumentsGame = new ArrayList<>();
+	private final List<Argument> argumentsJVM = new ArrayList<>();
+	private final List<Argument> argumentsGame = new ArrayList<>();
 	
 	public RunArguments(JSONObject argumentsJSON)
 	{
@@ -53,7 +48,7 @@ public class RunArguments
 		}
 	}
 	
-	public List<String> build(VersionInfo version, String classpath, String nativesDirectory)
+	public List<String> build(VersionInfo version, String classpath, String nativesDirectory, LoginProfile profile)
 	{
 		Pattern pat = Pattern.compile("\\$\\{([a-z_]+)\\}");
 		List<String> jvm = new ArrayList<>();
@@ -116,7 +111,7 @@ public class RunArguments
 				String replacement;
 				if("auth_player_name".equals(found))
 				{
-					replacement = username;
+					replacement = profile.getUsername();
 				}
 				else if("version_name".equals(found))
 				{
@@ -136,11 +131,11 @@ public class RunArguments
 				}
 				else if("auth_uuid".equals(found))
 				{
-					replacement = uuid;
+					replacement = profile.getUuid();
 				}
 				else if("auth_access_token".equals(found))
 				{
-					replacement = accessToken;
+					replacement = profile.getAccessToken();
 				}
 				else if("user_type".equals(found))
 				{
@@ -198,8 +193,8 @@ public class RunArguments
 			Object valueObj = object.get("value");
 			if(valueObj instanceof String)
 			{
-				values = new String[] {
-					(String) valueObj
+				values = new String[]{
+						(String) valueObj
 				};
 			}
 			else

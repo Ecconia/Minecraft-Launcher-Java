@@ -16,7 +16,7 @@ public class MCLauncherLab
 		version.getLibraryInfo().installNatives(Locations.librariesFolder, nativesFolder);
 	}
 	
-	public static void run(VersionInfo version)
+	public static void run(VersionInfo version, LoginProfile profile)
 	{
 		Locations.gameFolder.mkdirs();
 		Locations.runFolder.mkdirs();
@@ -45,7 +45,7 @@ public class MCLauncherLab
 		arguments.add("-XX:+CMSIncrementalMode");
 		arguments.add("-XX:-UseAdaptiveSizePolicy");
 		arguments.add("-Xmn128M");
-		arguments.addAll(version.getArguments().build(version, classpath, nativesFolder.getAbsolutePath()));
+		arguments.addAll(version.getArguments().build(version, classpath, nativesFolder.getAbsolutePath(), profile));
 		
 		for(String arg : arguments)
 		{

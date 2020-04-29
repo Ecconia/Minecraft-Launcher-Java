@@ -7,6 +7,7 @@ import de.ecconia.mclauncher.data.VersionInfo;
 import de.ecconia.mclauncher.download.VersionDownloader;
 import de.ecconia.mclauncher.webrequests.Requests;
 import de.ecconia.mclauncher.webrequests.Response;
+import java.io.IOException;
 
 public class MCLauncher
 {
@@ -15,13 +16,17 @@ public class MCLauncher
 	
 	public static void main(String[] args)
 	{
-		//Prints a new access token to console please paste it into the RunArguments class
-//		AccessTokenQuery.queryAccessToken();
+		//You may remove or adjust this as you please, but if you run it from an IDE its helpful to have.
+		String ideUsername = "Ecconia";
+		if(args.length > 0)
+		{
+			ideUsername = args[0];
+		}
 		
 		//Install and or Run:
 		setCurrentVersion("1.15.2"); //No verification, that it exists.
-		installVersion(); //Just needs to be done once!
-		run(); //Start the game from the selected version.
+//		installVersion(); //Just needs to be done once!
+		run(ideUsername); //Start the game from the selected version.
 	}
 	
 	private static void setCurrentVersion(String targetVersion)
@@ -47,12 +52,28 @@ public class MCLauncher
 		MCLauncherLab.installNatives(currentVersion);
 	}
 	
-	public static void run()
+	public static void run(String username)
 	{
 		if(currentVersion == null)
 		{
 			throw new IllegalStateException("Please run \"setCurrentVersion\" first.");
 		}
-		MCLauncherLab.run(currentVersion);
+		
+		try
+		{
+			LoginProfile profile = SimpleProfileStorage.loadProfile(username);
+			if(profile == null)
+			{
+				System.err.println("Something went wrong querying the login data from the Mojang server.");
+				System.exit(1);
+			}
+			MCLauncherLab.run(currentVersion, profile);
+		}
+		catch(IOException e)
+		{
+			System.err.println("Could not load profile file, aborting to prevent more errors.");
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 }

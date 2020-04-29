@@ -12,6 +12,18 @@ public class AccessTokenQuery
 	
 	public static void queryAccessToken()
 	{
+		LoginProfile profile = queryLoginProfile();
+		
+		System.out.println("-> Access Token:");
+		System.out.println(profile.getAccessToken());
+		System.out.println("-> Username:");
+		System.out.println(profile.getUsername());
+		System.out.println("-> UUID:");
+		System.out.println(profile.getUuid());
+	}
+	
+	public static LoginProfile queryLoginProfile()
+	{
 		Scanner scanner = new Scanner(System.in);
 		System.out.println("Interactive access token acquirement:");
 		System.out.println();
@@ -20,10 +32,10 @@ public class AccessTokenQuery
 		System.out.println("Please type your Mojang-Account-Password:");
 		String password = scanner.nextLine();
 		
-		queryAccessToken(email, password);
+		return queryAccessToken(email, password);
 	}
 	
-	public static void queryAccessToken(String email, String password)
+	public static LoginProfile queryAccessToken(String email, String password)
 	{
 		JSONObject body = new JSONObject();
 		
@@ -44,17 +56,13 @@ public class AccessTokenQuery
 			JSONObject profile = jsonResponse.getObject("selectedProfile");
 			String username = profile.getString("name");
 			String uuid = profile.getString("id");
-			System.out.println("-> Access Token:");
-			System.out.println(accessToken);
-			System.out.println("-> Username:");
-			System.out.println(username);
-			System.out.println("-> UUID:");
-			System.out.println(uuid);
+			return new LoginProfile(username, uuid, accessToken);
 		}
 		else
 		{
 			System.out.println("Something went wrong acquiring a new AccessToken: " + response.getResponseCode() + " " + response.getResponseMessage());
 			System.out.println("Response: \n\n" + response.getResponse());
+			return null;
 		}
 	}
 }
