@@ -143,7 +143,7 @@ public class LibraryEntry
 					while(enumEntries.hasMoreElements())
 					{
 						JarEntry file = enumEntries.nextElement();
-						if(file.getName().endsWith(".so"))
+						if(file.getName().endsWith(".so") || file.getName().endsWith(".dll"))
 						{
 							File f = new File(destination + File.separator + file.getName());
 							if(file.isDirectory())

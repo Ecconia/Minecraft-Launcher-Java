@@ -67,7 +67,7 @@ public class RunArguments
 				String replacement;
 				if("classpath".equals(found))
 				{
-					replacement = classpath;
+					replacement = classpath.replace("\\", "\\\\");
 				}
 				else if("launcher_name".equals(found))
 				{
@@ -79,7 +79,7 @@ public class RunArguments
 				}
 				else if("natives_directory".equals(found))
 				{
-					replacement = nativesDirectory;
+					replacement = nativesDirectory.replace("\\", "\\\\");
 				}
 				else
 				{
@@ -119,11 +119,11 @@ public class RunArguments
 				}
 				else if("game_directory".equals(found))
 				{
-					replacement = Locations.gameFolder.getAbsolutePath();
+					replacement = Locations.gameFolder.getAbsolutePath().replace("\\", "\\\\");
 				}
 				else if("assets_root".equals(found))
 				{
-					replacement = Locations.assetsFolder.getAbsolutePath();
+					replacement = Locations.assetsFolder.getAbsolutePath().replace("\\", "\\\\");
 				}
 				else if("assets_index_name".equals(found))
 				{

@@ -33,7 +33,7 @@ public class MCLauncherLab
 		
 		//Create classpath:
 		String classpath = version.getLibraryInfo().genClasspath(Locations.librariesFolder);
-		classpath += ':' + new File(versionFolder, version.getInfo().getId() + ".jar").getAbsolutePath();
+		classpath += File.pathSeparator + new File(versionFolder, version.getInfo().getId() + ".jar").getAbsolutePath();
 		
 		//Create natives directory:
 		File nativesFolder = new File(versionFolder, version.getInfo().getId() + "-natives");
@@ -46,7 +46,17 @@ public class MCLauncherLab
 		arguments.add("-XX:-UseAdaptiveSizePolicy");
 		arguments.add("-Xmn128M");
 		arguments.addAll(version.getArguments().build(version, classpath, nativesFolder.getAbsolutePath(), profile));
-		
+
+		for(int i = 0; i < arguments.size(); i++)
+		{
+			String argument = arguments.get(i);
+			if(argument.indexOf(' ') != -1)
+			{
+				argument = '"' + argument + '"';
+				arguments.set(i, argument);
+			}
+		}
+
 		for(String arg : arguments)
 		{
 			System.out.println(arg);

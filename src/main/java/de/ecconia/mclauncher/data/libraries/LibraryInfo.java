@@ -32,7 +32,7 @@ public class LibraryInfo
 		{
 			if(relevantLibararies.get(i).isNonNative())
 			{
-				tmp += ":" + relevantLibararies.get(i).getClasspath(libraryFile);
+				tmp += File.pathSeparator + relevantLibararies.get(i).getClasspath(libraryFile);
 			}
 		}
 		return tmp;
