@@ -24,7 +24,7 @@ public class MCLauncher
 		}
 		
 		//Install and or Run:
-		setCurrentVersion("1.15.2"); //No verification, that it exists.
+		setCurrentVersion("1.16.1"); //No verification, that it exists.
 //		installVersion(); //Just needs to be done once!
 		run(ideUsername); //Start the game from the selected version.
 	}
