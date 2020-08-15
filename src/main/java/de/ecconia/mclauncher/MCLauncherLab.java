@@ -41,10 +41,10 @@ public class MCLauncherLab
 		List<String> arguments = new ArrayList<>();
 		arguments.add("java"); //Here?
 		arguments.add("-Xmx1G");
-		arguments.add("-XX:+UseConcMarkSweepGC");
-		arguments.add("-XX:+CMSIncrementalMode");
-		arguments.add("-XX:-UseAdaptiveSizePolicy");
-		arguments.add("-Xmn128M");
+		//arguments.add("-XX:+UseConcMarkSweepGC");
+		//arguments.add("-XX:+CMSIncrementalMode");
+		//arguments.add("-XX:-UseAdaptiveSizePolicy");
+		//arguments.add("-Xmn128M");
 		arguments.addAll(version.getArguments().build(version, classpath, nativesFolder.getAbsolutePath(), profile));
 
 		for(int i = 0; i < arguments.size(); i++)
