@@ -11,12 +11,6 @@ import java.util.List;
 
 public class MCLauncherLab
 {
-	public static void installNatives(LoadedVersion version)
-	{
-		File nativesFolder = new File(new File(Locations.versionsFolder, version.getId()), version.getId() + "-natives");
-		version.getLibraryInfo().installNatives(Locations.librariesFolder, nativesFolder);
-	}
-	
 	public static void run(LoadedVersion version, LoginProfile profile)
 	{
 		Locations.gameFolder.mkdirs();

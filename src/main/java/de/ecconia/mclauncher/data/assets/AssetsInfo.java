@@ -2,6 +2,7 @@ package de.ecconia.mclauncher.data.assets;
 
 import de.ecconia.java.json.JSONObject;
 import de.ecconia.java.json.JSONParser;
+import de.ecconia.mclauncher.download.ArtifactDownload;
 import de.ecconia.mclauncher.download.DownloadInfo;
 import de.ecconia.mclauncher.webrequests.Requests;
 import de.ecconia.mclauncher.webrequests.Response;
@@ -11,7 +12,7 @@ import java.util.Map.Entry;
 
 public class AssetsInfo
 {
-	private final DownloadInfo assetsManifest;
+	private final ArtifactDownload assetsManifest;
 	private final String id;
 	private final long totalSize;
 	
@@ -19,7 +20,7 @@ public class AssetsInfo
 	
 	public AssetsInfo(JSONObject object)
 	{
-		this.assetsManifest = new DownloadInfo(object);
+		this.assetsManifest = new ArtifactDownload(object);
 		this.id = object.getString("id");
 		this.totalSize = object.getLong("totalSize");
 	}
@@ -44,28 +45,16 @@ public class AssetsInfo
 		return objects;
 	}
 	
-	public byte[] resolve()
+	public void resolveFromJSON(JSONObject json)
 	{
-		if(objects == null)
+		objects = new ArrayList<>();
+		JSONObject objects = json.getObject("objects");
+		for(Entry<String, Object> entry : objects.getEntries().entrySet())
 		{
-			objects = new ArrayList<>();
-			//TBI: Is this a proper place to download - in a data class?
-			Response reponse = Requests.sendGetRequest(assetsManifest.getUrl());
-			String sourceCode = reponse.getResponse();
-			
-			JSONObject object = (JSONObject) JSONParser.parse(sourceCode);
-			JSONObject objects = object.getObject("objects");
-			for(Entry<String, Object> entry : objects.getEntries().entrySet())
-			{
-				String key = entry.getKey();
-				JSONObject value = JSONObject.asObject(entry.getValue());
-				this.objects.add(new AssetsPart(key, value.getLong("size"), value.getString("hash")));
-			}
-			
-			return reponse.getResponseRaw();
+			String key = entry.getKey();
+			JSONObject value = JSONObject.asObject(entry.getValue());
+			this.objects.add(new AssetsPart(key, value.getLong("size"), value.getString("hash")));
 		}
-		
-		return null;
 	}
 	
 	public static class AssetsPart

@@ -1,6 +1,5 @@
 package de.ecconia.mclauncher;
 
-import de.ecconia.mclauncher.download.VersionDownloader;
 import de.ecconia.mclauncher.newdata.LoadedVersion;
 import java.io.IOException;
 
@@ -22,6 +21,7 @@ public class MCLauncher
 		
 		String versionName = "1.16.3";
 		LoadedVersion version = core.loadVersion(versionName);
+		System.out.println();
 		if(version == null)
 		{
 			LauncherCore.error("Could not load version '" + versionName + "'");
@@ -32,20 +32,18 @@ public class MCLauncher
 			LauncherCore.normal("Successfully loaded version '" + versionName + "'");
 			currentVersion = version;
 			
-//			installVersion(); //Just needs to be done once!
+			try
+			{
+				core.downloadNecessaryFiles(version);
+			}
+			catch(IOException e)
+			{
+				e.printStackTrace();
+			}
+			
+			System.out.println();
 			run(ideUsername); //Start the game from the selected version.
 		}
-	}
-	
-	public static void installVersion()
-	{
-		if(currentVersion == null)
-		{
-			throw new IllegalStateException("Please load a version first.");
-		}
-		Locations.rootFolder.mkdirs(); //Ensure the root folder is ready.
-		VersionDownloader.download(currentVersion);
-		MCLauncherLab.installNatives(currentVersion);
 	}
 	
 	public static void run(String username)

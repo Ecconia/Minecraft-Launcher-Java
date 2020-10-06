@@ -18,18 +18,21 @@ public class RunArguments
 	
 	public RunArguments(JSONObject argumentsJSON)
 	{
-		JSONArray jvmJSON = argumentsJSON.getArray("jvm");
-		for(Object entry : jvmJSON.getEntries())
+		JSONArray jvmJSON = argumentsJSON.getArrayOrNull("jvm");
+		if(jvmJSON != null)
 		{
-			if(entry instanceof String)
+			for(Object entry : jvmJSON.getEntries())
 			{
-				String data = (String) entry;
-				argumentsJVM.add(new StaticArgument(data));
-			}
-			else if(entry instanceof JSONObject)
-			{
-				JSONObject data = (JSONObject) entry;
-				argumentsJVM.add(new RuledArgument(data));
+				if(entry instanceof String)
+				{
+					String data = (String) entry;
+					argumentsJVM.add(new StaticArgument(data));
+				}
+				else if(entry instanceof JSONObject)
+				{
+					JSONObject data = (JSONObject) entry;
+					argumentsJVM.add(new RuledArgument(data));
+				}
 			}
 		}
 		
@@ -161,6 +164,11 @@ public class RunArguments
 		
 		jvm.addAll(game);
 		return jvm;
+	}
+	
+	public boolean isEmpty()
+	{
+		return argumentsJVM.isEmpty() && argumentsGame.isEmpty();
 	}
 	
 	private abstract static class Argument

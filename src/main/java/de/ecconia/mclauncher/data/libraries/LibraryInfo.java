@@ -10,29 +10,45 @@ import de.ecconia.java.json.JSONObject;
 
 public class LibraryInfo
 {
-	private final List<LibraryEntry> allLibararies = new ArrayList<>();
-	private final List<LibraryEntry> relevantLibararies;
+	private final List<LibraryEntry> allLibraries = new ArrayList<>();
+	private final List<LibraryEntry> relevantLibraries;
 	
 	public LibraryInfo(JSONArray object)
 	{
 		for(Object entry : object.getEntries())
 		{
 			JSONObject libraryEntryObject = JSONArray.asObject(entry);
-			allLibararies.add(new LibraryEntry(libraryEntryObject));
+			allLibraries.add(new LibraryEntry(libraryEntryObject));
 		}
 		
 		//Apply rules, this should only filter the wrong operating systems (MaxOS or other).
-		relevantLibararies = allLibararies.stream().filter(LibraryEntry::isRelevant).collect(Collectors.toList());
+		relevantLibraries = allLibraries.stream().filter(LibraryEntry::isRelevant).collect(Collectors.toList());
+	}
+	
+	public LibraryInfo(List both)
+	{
+		allLibraries.addAll(both);
+		
+		//Apply rules, this should only filter the wrong operating systems (MaxOS or other).
+		relevantLibraries = allLibraries.stream().filter(LibraryEntry::isRelevant).collect(Collectors.toList());
+	}
+	
+	public static LibraryInfo mergedCopy(LibraryInfo one, LibraryInfo two)
+	{
+		List both = new ArrayList();
+		both.addAll(one.getAllLibraries());
+		both.addAll(two.getAllLibraries());
+		return new LibraryInfo(both);
 	}
 	
 	public String genClasspath(File libraryFile)
 	{
-		String tmp = relevantLibararies.get(0).getClasspath(libraryFile);
-		for(int i = 1; i < relevantLibararies.size(); i++)
+		String tmp = relevantLibraries.get(0).getClasspath(libraryFile);
+		for(int i = 1; i < relevantLibraries.size(); i++)
 		{
-			if(relevantLibararies.get(i).isNonNative())
+			if(relevantLibraries.get(i).isNonNative())
 			{
-				tmp += File.pathSeparator + relevantLibararies.get(i).getClasspath(libraryFile);
+				tmp += File.pathSeparator + relevantLibraries.get(i).getClasspath(libraryFile);
 			}
 		}
 		return tmp;
@@ -41,7 +57,7 @@ public class LibraryInfo
 	public void installNatives(File libLocation, File destination)
 	{
 		destination.mkdirs();
-		for(LibraryEntry entry : relevantLibararies)
+		for(LibraryEntry entry : relevantLibraries)
 		{
 			if(!entry.isNonNative())
 			{
@@ -52,6 +68,11 @@ public class LibraryInfo
 	
 	public List<LibraryEntry> getRelevantLibraries()
 	{
-		return relevantLibararies;
+		return relevantLibraries;
+	}
+	
+	public List<LibraryEntry> getAllLibraries()
+	{
+		return allLibraries;
 	}
 }

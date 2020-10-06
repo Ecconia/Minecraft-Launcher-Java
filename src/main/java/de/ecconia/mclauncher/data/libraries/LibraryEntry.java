@@ -1,5 +1,12 @@
 package de.ecconia.mclauncher.data.libraries;
 
+import de.ecconia.java.json.JSONArray;
+import de.ecconia.java.json.JSONObject;
+import de.ecconia.mclauncher.OSTools;
+import de.ecconia.mclauncher.data.rules.Rules;
+import de.ecconia.mclauncher.download.ArtifactDownload;
+import de.ecconia.mclauncher.download.DownloadInfo;
+import de.ecconia.mclauncher.download.MavenDownload;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -13,43 +20,48 @@ import java.util.Map.Entry;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import de.ecconia.java.json.JSONArray;
-import de.ecconia.java.json.JSONObject;
-import de.ecconia.mclauncher.OSTools;
-import de.ecconia.mclauncher.data.rules.Rules;
-import de.ecconia.mclauncher.download.DownloadInfo;
-
 public class LibraryEntry
 {
 	private final String name;
 	private final Rules rules;
 	
-	private final DownloadInfo artifact;
-	private final Map<String, DownloadInfo> classifiers;
+	private final DownloadInfo download;
+	private final Map<String, ArtifactDownload> classifiers;
 	private final Map<String, String> natives;
-	private final List<String> extractionEcludes;
+	private final List<String> extractionExcludes;
 	
 	public LibraryEntry(JSONObject object)
 	{
 		JSONArray rulesJSON = object.getArrayOrNull("rules");
 		this.rules = rulesJSON != null ? new Rules(rulesJSON) : null;
+		
 		this.name = object.getString("name");
 		
-		JSONObject downloadJSON = object.getObject("downloads");
-		artifact = new DownloadInfo(downloadJSON.getObject("artifact"));
-		
-		JSONObject classifiersJSON = downloadJSON.getObjectOrNull("classifiers");
-		if(classifiersJSON == null)
+		JSONObject downloadJSON = object.getObjectOrNull("downloads");
+		if(downloadJSON != null)
 		{
-			classifiers = null;
+			download = new ArtifactDownload(downloadJSON.getObject("artifact"));
+			
+			JSONObject classifiersJSON = downloadJSON.getObjectOrNull("classifiers");
+			if(classifiersJSON == null)
+			{
+				classifiers = null;
+			}
+			else
+			{
+				classifiers = new HashMap<>();
+				for(Entry<String, Object> entry : classifiersJSON.getEntries().entrySet())
+				{
+					classifiers.put(entry.getKey(), new ArtifactDownload(JSONObject.asObject(entry.getValue())));
+				}
+			}
 		}
 		else
 		{
-			classifiers = new HashMap<>();
-			for(Entry<String, Object> entry : classifiersJSON.getEntries().entrySet())
-			{
-				classifiers.put(entry.getKey(), new DownloadInfo(JSONObject.asObject(entry.getValue())));
-			}
+			String url = object.getString("url");
+			download = new MavenDownload(url, getPath());
+			
+			classifiers = null;
 		}
 		
 		JSONObject nativesJSON = object.getObjectOrNull("natives");
@@ -69,15 +81,15 @@ public class LibraryEntry
 		JSONObject extractionJSON = object.getObjectOrNull("extract");
 		if(extractionJSON == null)
 		{
-			extractionEcludes = null;
+			extractionExcludes = null;
 		}
 		else
 		{
-			extractionEcludes = new ArrayList<>();
+			extractionExcludes = new ArrayList<>();
 			JSONArray excludesJSON = extractionJSON.getArray("exclude");
 			for(Object entry : excludesJSON.getEntries())
 			{
-				extractionEcludes.add(JSONArray.asString(entry));
+				extractionExcludes.add(JSONArray.asString(entry));
 			}
 		}
 	}
@@ -97,12 +109,22 @@ public class LibraryEntry
 		return name;
 	}
 	
-	public DownloadInfo getArtifact()
+	public String getPath()
 	{
-		return artifact;
+		String[] parts = this.name.split(":");
+		if(parts.length != 3)
+		{
+			throw new RuntimeException("Invalid library name: " + name);
+		}
+		
+		String folders = parts[0].replace('.', '/');
+		String fileName = parts[1];
+		String version = parts[2];
+		
+		return folders + '/' + fileName + '/' + version + '/' + fileName + '-' + version + ".jar";
 	}
 	
-	public Map<String, DownloadInfo> getClassifiers()
+	public Map<String, ArtifactDownload> getClassifiers()
 	{
 		return classifiers;
 	}
@@ -114,7 +136,7 @@ public class LibraryEntry
 	
 	public String getClasspath(File libraryFile)
 	{
-		return new File(libraryFile, artifact.getPath()).getAbsolutePath();
+		return new File(libraryFile, getPath()).getAbsolutePath();
 	}
 	
 	public boolean isNonNative()
@@ -128,7 +150,7 @@ public class LibraryEntry
 		{
 			if(OSTools.isOsName(entry.getKey()))
 			{
-				DownloadInfo nativeFile = classifiers.get(entry.getValue());
+				ArtifactDownload nativeFile = classifiers.get(entry.getValue());
 				if(nativeFile == null)
 				{
 					return;
@@ -148,7 +170,6 @@ public class LibraryEntry
 							File f = new File(destination + File.separator + file.getName());
 							if(file.isDirectory())
 							{
-								//f.mkdir();
 								continue;
 							}
 							InputStream is = jar.getInputStream(file);
@@ -171,5 +192,15 @@ public class LibraryEntry
 				break;
 			}
 		}
+	}
+	
+	public boolean download(File librariesFolder)
+	{
+		return download.download(librariesFolder);
+	}
+	
+	public boolean exists(File destination)
+	{
+		return download.exists(destination);
 	}
 }
