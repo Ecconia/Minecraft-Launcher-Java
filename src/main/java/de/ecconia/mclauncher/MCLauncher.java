@@ -2,7 +2,6 @@ package de.ecconia.mclauncher;
 
 import de.ecconia.mclauncher.download.VersionDownloader;
 import de.ecconia.mclauncher.newdata.LoadedVersion;
-import de.ecconia.mclauncher.newdata.Version;
 import java.io.IOException;
 
 public class MCLauncher
@@ -22,20 +21,16 @@ public class MCLauncher
 		LauncherCore core = new LauncherCore();
 		
 		String versionName = "1.16.3";
-		Version version = core.loadVersion(versionName);
+		LoadedVersion version = core.loadVersion(versionName);
 		if(version == null)
 		{
 			LauncherCore.error("Could not load version '" + versionName + "'");
-		}
-		else if(!(version instanceof LoadedVersion))
-		{
-			throw new RuntimeException("Got unloaded version which should never be the case.");
 		}
 		else
 		{
 			System.out.println();
 			LauncherCore.normal("Successfully loaded version '" + versionName + "'");
-			currentVersion = (LoadedVersion) version;
+			currentVersion = version;
 			
 //			installVersion(); //Just needs to be done once!
 			run(ideUsername); //Start the game from the selected version.

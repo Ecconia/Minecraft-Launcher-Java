@@ -4,6 +4,7 @@ import de.ecconia.java.json.JSONObject;
 import de.ecconia.java.json.JSONParser;
 import de.ecconia.mclauncher.data.OnlineVersionList;
 import de.ecconia.mclauncher.newdata.FullVersion;
+import de.ecconia.mclauncher.newdata.LoadedVersion;
 import de.ecconia.mclauncher.newdata.OnlineVersion;
 import de.ecconia.mclauncher.newdata.Version;
 import de.ecconia.mclauncher.webrequests.RequestException;
@@ -18,7 +19,7 @@ public class LauncherCore
 {
 	private OnlineVersionList onlineList;
 	
-	public Version loadVersion(String versionID)
+	public LoadedVersion loadVersion(String versionID)
 	{
 		//Attempt to load the profile from local:
 		File versionFolder = new File(Locations.versionsFolder, versionID);
@@ -52,7 +53,7 @@ public class LauncherCore
 		catch(Exception e)
 		{
 			//TODO: Properly.
-			throw new RuntimeException("Was not able to read local file (or parse it whatever)...");
+			throw new RuntimeException("Was not able to read local file (or parse it whatever)...", e);
 		}
 	}
 	
@@ -94,12 +95,12 @@ public class LauncherCore
 		return onlineList;
 	}
 	
-	public Version installOnlineVersion(OnlineVersion onlineVersion)
+	public LoadedVersion installOnlineVersion(OnlineVersion onlineVersion)
 	{
 		//Download amd parse full info file for this version:
 		Response response = Requests.sendGetRequest(onlineVersion.getUrl());
 		JSONObject versionObject = (JSONObject) JSONParser.parse(response.getResponse());
-		Version version = jsonToOfflineVersion(versionObject);
+		LoadedVersion version = jsonToOfflineVersion(versionObject);
 		
 		//Save profile.json
 		normal("Saving version " + onlineVersion.getId());
@@ -112,7 +113,7 @@ public class LauncherCore
 		return version;
 	}
 	
-	public Version jsonToOfflineVersion(JSONObject versionObject)
+	public LoadedVersion jsonToOfflineVersion(JSONObject versionObject)
 	{
 		String inheritsFrom = versionObject.getStringOrNull("inheritsFrom");
 		if(inheritsFrom == null)
