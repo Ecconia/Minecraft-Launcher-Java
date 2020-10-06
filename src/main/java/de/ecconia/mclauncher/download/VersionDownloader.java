@@ -2,9 +2,9 @@ package de.ecconia.mclauncher.download;
 
 import de.ecconia.mclauncher.Locations;
 import de.ecconia.mclauncher.OSTools;
-import de.ecconia.mclauncher.data.VersionInfo;
 import de.ecconia.mclauncher.data.assets.AssetsInfo.AssetsPart;
 import de.ecconia.mclauncher.data.libraries.LibraryEntry;
+import de.ecconia.mclauncher.newdata.LoadedVersion;
 import de.ecconia.mclauncher.webrequests.Requests;
 import de.ecconia.mclauncher.webrequests.Response;
 import java.io.File;
@@ -14,17 +14,10 @@ import java.util.Map.Entry;
 
 public class VersionDownloader
 {
-	public static void download(VersionInfo version, byte[] versionInfoSource)
+	public static void download(LoadedVersion version)
 	{
-		String id = version.getInfo().getId();
-		
-		//Save versions/<version>/<version>.json
+		String id = version.getId();
 		File versionFolder = new File(Locations.versionsFolder, id);
-		versionFolder.mkdirs();
-		if(versionInfoSource != null)
-		{
-			saveBytes(versionInfoSource, new File(versionFolder, id + ".json"));
-		}
 		
 		//Save versions/<version>/<version>.jar
 		DownloadInfo clientJarDL = version.getDownloads().get("client");

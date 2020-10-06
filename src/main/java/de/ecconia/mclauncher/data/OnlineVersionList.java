@@ -3,6 +3,8 @@ package de.ecconia.mclauncher.data;
 import de.ecconia.java.json.JSONArray;
 import de.ecconia.java.json.JSONObject;
 import de.ecconia.java.json.JSONParser;
+import de.ecconia.mclauncher.LauncherCore;
+import de.ecconia.mclauncher.newdata.OnlineVersion;
 import de.ecconia.mclauncher.webrequests.Requests;
 import de.ecconia.mclauncher.webrequests.Response;
 import java.util.HashMap;
@@ -35,6 +37,7 @@ public class OnlineVersionList
 	
 	public OnlineVersionList()
 	{
+		LauncherCore.normal("Downloading Mojang version list.");
 		String versionManifestSource = getRequest(versionManifest);
 		JSONObject versionManifestJSON = (JSONObject) JSONParser.parse(versionManifestSource);
 		
@@ -49,6 +52,7 @@ public class OnlineVersionList
 		JSONObject latestJSON = versionManifestJSON.getObject("latest");
 		latestRelease = latestJSON.getString("release");
 		latestSnapshot = latestJSON.getString("snapshot");
+		LauncherCore.normal("> Found " + versions.size() + " versions.");
 	}
 	
 	private void addVersion(OnlineVersion version)
@@ -75,59 +79,5 @@ public class OnlineVersionList
 	{
 		Response request = Requests.sendGetRequest(address);
 		return request.getResponse();
-	}
-	
-	public static class OnlineVersion
-	{
-		//Use better smaller types.
-		private final String type;
-		private final String time;
-		private final String releaseTime;
-		private final String url;
-		private final String id;
-		
-		public OnlineVersion(String type, String time, String releaseTime, String url, String id)
-		{
-			this.type = type;
-			this.time = time;
-			this.releaseTime = releaseTime;
-			this.url = url;
-			this.id = id;
-		}
-		
-		public OnlineVersion(JSONObject object)
-		{
-			this(
-					object.getString("type"),
-					object.getString("time"),
-					object.getString("releaseTime"),
-					object.getString("url"),
-					object.getString("id"));
-		}
-		
-		public String getId()
-		{
-			return id;
-		}
-		
-		public String getReleaseTime()
-		{
-			return releaseTime;
-		}
-		
-		public String getTime()
-		{
-			return time;
-		}
-		
-		public String getType()
-		{
-			return type;
-		}
-		
-		public String getUrl()
-		{
-			return url;
-		}
 	}
 }

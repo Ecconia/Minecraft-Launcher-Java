@@ -5,6 +5,7 @@ import de.ecconia.java.json.JSONObject;
 import de.ecconia.mclauncher.Locations;
 import de.ecconia.mclauncher.LoginProfile;
 import de.ecconia.mclauncher.data.rules.Rules;
+import de.ecconia.mclauncher.newdata.LoadedVersion;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -48,7 +49,7 @@ public class RunArguments
 		}
 	}
 	
-	public List<String> build(VersionInfo version, String classpath, String nativesDirectory, LoginProfile profile)
+	public List<String> build(LoadedVersion version, String classpath, String nativesDirectory, LoginProfile profile)
 	{
 		Pattern pat = Pattern.compile("\\$\\{([a-z_]+)\\}");
 		List<String> jvm = new ArrayList<>();
@@ -115,7 +116,7 @@ public class RunArguments
 				}
 				else if("version_name".equals(found))
 				{
-					replacement = version.getInfo().getId();
+					replacement = version.getId();
 				}
 				else if("game_directory".equals(found))
 				{

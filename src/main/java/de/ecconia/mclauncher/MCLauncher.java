@@ -1,21 +1,13 @@
 package de.ecconia.mclauncher;
 
-import de.ecconia.java.json.JSONObject;
-import de.ecconia.java.json.JSONParser;
-import de.ecconia.mclauncher.data.OnlineVersionList;
-import de.ecconia.mclauncher.data.VersionInfo;
 import de.ecconia.mclauncher.download.VersionDownloader;
-import de.ecconia.mclauncher.webrequests.Requests;
-import de.ecconia.mclauncher.webrequests.Response;
-import java.io.File;
+import de.ecconia.mclauncher.newdata.LoadedVersion;
+import de.ecconia.mclauncher.newdata.Version;
 import java.io.IOException;
-import java.nio.file.Files;
-import javax.xml.stream.Location;
 
 public class MCLauncher
 {
-	private static VersionInfo currentVersion;
-	private static byte[] versionInfoRaw;
+	private static LoadedVersion currentVersion;
 	
 	public static void main(String[] args)
 	{
@@ -27,45 +19,37 @@ public class MCLauncher
 		}
 		
 		//Install and or Run:
-		setCurrentVersion("1.16.1"); //No verification, that it exists.
-//		installVersion(); //Just needs to be done once!
-		run(ideUsername); //Start the game from the selected version.
-	}
-	
-	private static void setOfflineVersion(String targetVersion)
-	{
-		try
-		{
-			byte[] bytes = Files.readAllBytes(new File(new File(Locations.versionsFolder, targetVersion), targetVersion + ".json").toPath());
-			JSONObject object = (JSONObject) JSONParser.parse(new String(bytes));
-			currentVersion = new VersionInfo(object, "LoadedFromLocal");
-		}
-		catch(IOException e)
-		{
-			e.printStackTrace();
-		}
-	}
-	
-	private static void setCurrentVersion(String targetVersion)
-	{
-		OnlineVersionList onlineList = new OnlineVersionList(); //Download all versions file
-		OnlineVersionList.OnlineVersion targetVersionEntry = onlineList.getVersion(targetVersion); //Pick desired version
+		LauncherCore core = new LauncherCore();
 		
-		//Download amd parse full info file for this version:
-		Response response = Requests.sendGetRequest(targetVersionEntry.getUrl());
-		JSONObject object = (JSONObject) JSONParser.parse(response.getResponse());
-		currentVersion = new VersionInfo(object, targetVersionEntry.getUrl());
-		versionInfoRaw = response.getResponseRaw();
+		String versionName = "1.16.3";
+		Version version = core.loadVersion(versionName);
+		if(version == null)
+		{
+			LauncherCore.error("Could not load version '" + versionName + "'");
+		}
+		else if(!(version instanceof LoadedVersion))
+		{
+			throw new RuntimeException("Got unloaded version which should never be the case.");
+		}
+		else
+		{
+			System.out.println();
+			LauncherCore.normal("Successfully loaded version '" + versionName + "'");
+			currentVersion = (LoadedVersion) version;
+			
+//			installVersion(); //Just needs to be done once!
+			run(ideUsername); //Start the game from the selected version.
+		}
 	}
 	
 	public static void installVersion()
 	{
 		if(currentVersion == null)
 		{
-			throw new IllegalStateException("Please run \"setCurrentVersion\" first.");
+			throw new IllegalStateException("Please load a version first.");
 		}
 		Locations.rootFolder.mkdirs(); //Ensure the root folder is ready.
-		VersionDownloader.download(currentVersion, versionInfoRaw);
+		VersionDownloader.download(currentVersion);
 		MCLauncherLab.installNatives(currentVersion);
 	}
 	

@@ -1,6 +1,7 @@
 package de.ecconia.mclauncher;
 
-import de.ecconia.mclauncher.data.VersionInfo;
+import de.ecconia.mclauncher.newdata.FullVersion;
+import de.ecconia.mclauncher.newdata.LoadedVersion;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -10,18 +11,18 @@ import java.util.List;
 
 public class MCLauncherLab
 {
-	public static void installNatives(VersionInfo version)
+	public static void installNatives(LoadedVersion version)
 	{
-		File nativesFolder = new File(new File(Locations.versionsFolder, version.getInfo().getId()), version.getInfo().getId() + "-natives");
+		File nativesFolder = new File(new File(Locations.versionsFolder, version.getId()), version.getId() + "-natives");
 		version.getLibraryInfo().installNatives(Locations.librariesFolder, nativesFolder);
 	}
 	
-	public static void run(VersionInfo version, LoginProfile profile)
+	public static void run(LoadedVersion version, LoginProfile profile)
 	{
 		Locations.gameFolder.mkdirs();
 		Locations.runFolder.mkdirs();
 		
-		File versionFolder = new File(Locations.versionsFolder, version.getInfo().getId());
+		File versionFolder = new File(Locations.versionsFolder, version.getId());
 		//> which java
 		//> l /usr/bin/java
 		//> l /etc/alternatives/java
@@ -33,10 +34,10 @@ public class MCLauncherLab
 		
 		//Create classpath:
 		String classpath = version.getLibraryInfo().genClasspath(Locations.librariesFolder);
-		classpath += File.pathSeparator + new File(versionFolder, version.getInfo().getId() + ".jar").getAbsolutePath();
+		classpath += File.pathSeparator + new File(versionFolder, version.getId() + ".jar").getAbsolutePath();
 		
 		//Create natives directory:
-		File nativesFolder = new File(versionFolder, version.getInfo().getId() + "-natives");
+		File nativesFolder = new File(versionFolder, version.getId() + "-natives");
 		
 		List<String> arguments = new ArrayList<>();
 		arguments.add("java"); //Here?
@@ -46,7 +47,7 @@ public class MCLauncherLab
 		//arguments.add("-XX:-UseAdaptiveSizePolicy");
 		//arguments.add("-Xmn128M");
 		arguments.addAll(version.getArguments().build(version, classpath, nativesFolder.getAbsolutePath(), profile));
-
+		
 		for(int i = 0; i < arguments.size(); i++)
 		{
 			String argument = arguments.get(i);
@@ -56,7 +57,7 @@ public class MCLauncherLab
 				arguments.set(i, argument);
 			}
 		}
-
+		
 		for(String arg : arguments)
 		{
 			System.out.println(arg);
