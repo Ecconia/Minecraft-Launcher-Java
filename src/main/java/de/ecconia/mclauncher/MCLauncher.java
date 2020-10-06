@@ -7,7 +7,10 @@ import de.ecconia.mclauncher.data.VersionInfo;
 import de.ecconia.mclauncher.download.VersionDownloader;
 import de.ecconia.mclauncher.webrequests.Requests;
 import de.ecconia.mclauncher.webrequests.Response;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import javax.xml.stream.Location;
 
 public class MCLauncher
 {
@@ -27,6 +30,20 @@ public class MCLauncher
 		setCurrentVersion("1.16.1"); //No verification, that it exists.
 //		installVersion(); //Just needs to be done once!
 		run(ideUsername); //Start the game from the selected version.
+	}
+	
+	private static void setOfflineVersion(String targetVersion)
+	{
+		try
+		{
+			byte[] bytes = Files.readAllBytes(new File(new File(Locations.versionsFolder, targetVersion), targetVersion + ".json").toPath());
+			JSONObject object = (JSONObject) JSONParser.parse(new String(bytes));
+			currentVersion = new VersionInfo(object, "LoadedFromLocal");
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	private static void setCurrentVersion(String targetVersion)
