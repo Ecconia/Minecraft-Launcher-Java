@@ -11,25 +11,31 @@ public class MCLauncher
 	{
 		//You may remove or adjust this as you please, but if you run it from an IDE its helpful to have.
 		String ideUsername = "Ecconia";
+		String ideProfile = "1.17";
 		if(args.length > 0)
 		{
 			ideUsername = args[0];
 		}
 		
+		if(args.length > 1)
+		{
+			ideProfile = args[0];
+			ideUsername = args[1];
+		}
+		
 		//Install and or Run:
 		LauncherCore core = new LauncherCore();
 		
-		String versionName = "1.16.3";
-		LoadedVersion version = core.loadVersion(versionName);
+		LoadedVersion version = core.loadVersion(ideProfile);
 		System.out.println();
 		if(version == null)
 		{
-			LauncherCore.error("Could not load version '" + versionName + "'");
+			LauncherCore.error("Could not load version '" + ideProfile + "'");
 		}
 		else
 		{
 			System.out.println();
-			LauncherCore.normal("Successfully loaded version '" + versionName + "'");
+			LauncherCore.normal("Successfully loaded version '" + ideProfile + "'");
 			currentVersion = version;
 			
 			try
