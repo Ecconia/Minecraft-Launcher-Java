@@ -3,6 +3,7 @@ package de.ecconia.mclauncher.newdata;
 import de.ecconia.java.json.JSONObject;
 import de.ecconia.mclauncher.data.DownloadSection;
 import de.ecconia.mclauncher.data.RunArguments;
+import de.ecconia.mclauncher.data.RunArgumentsNew;
 import de.ecconia.mclauncher.data.assets.AssetsInfo;
 import de.ecconia.mclauncher.data.libraries.LibraryInfo;
 
@@ -17,7 +18,7 @@ public class InheritingVersion extends LoadedVersion
 		this.parentVersion = parentVersion;
 		
 		this.libraryInfo = LibraryInfo.mergedCopy(parentVersion.getLibraryInfo(), new LibraryInfo(versionObject.getArray("libraries")));
-		RunArguments arguments = new RunArguments(versionObject.getObject("arguments"));
+		RunArgumentsNew arguments = new RunArgumentsNew(versionObject.getObject("arguments"));
 		if(!arguments.isEmpty())
 		{
 			throw new RuntimeException("Arguments are not empty, please send the version.json to the developer.");

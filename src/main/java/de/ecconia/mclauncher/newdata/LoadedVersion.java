@@ -3,6 +3,7 @@ package de.ecconia.mclauncher.newdata;
 import de.ecconia.java.json.JSONObject;
 import de.ecconia.mclauncher.data.DownloadSection;
 import de.ecconia.mclauncher.data.RunArguments;
+import de.ecconia.mclauncher.data.RunArgumentsNew;
 import de.ecconia.mclauncher.data.assets.AssetsInfo;
 import de.ecconia.mclauncher.data.libraries.LibraryInfo;
 
