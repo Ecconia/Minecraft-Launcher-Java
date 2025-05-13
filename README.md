@@ -1,3 +1,6 @@
+**DISCONTINUED!** This project lacks support for config inheritance (so Fabric & Forge won't work), I also never added MS authentification support - these things make it unusable for me.\
+**Instead use** [Prism Launcher](https://github.com/PrismLauncher/PrismLauncher) that launcher looks good - has all the features you could possibly need. I am just using that now.
+
 # Minecraft-Launcher-Java
 A Minecraft launcher written from scratch in Java. It does not require previous Minecraft installations or its files. It aims to be less bloated as the new non-Java launcher, but more simple than the official Java launcher.
 
@@ -16,5 +19,6 @@ The whole launcher should be more self-aware of its current folder state and dow
 GUI?! Who needs that?? It should be possible to control the launcher full via terminal terminal, if required. But ofc it should have a simplistic GUI which allows to start a game with at most one click.
 
 # Contact:
-I have a discord server for my (Ecconia's) projects: http://discord.gg/dYYxNvp
-You may drop related ideas there, or ask related questions. :)
+I have a discord server for my (Ecconia's) projects: https://discord.gg/dYYxNvp \
+The project is discontinued and no longer functional, but you are still welcome to ask questions about it or anything related. :)
+
